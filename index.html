@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    body {
+        font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+        font-size: 14px;
+    }
+
+    input {
+        width: 300px;
+    }
+
+    table {
+        border-color: grey;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    table td {
+        border: 1px solid #e6e6e6;
+        padding: 0.5em;
+    }
+
+    table caption {
+        margin-bottom: 10px;
+    }
+
+    button {
+        font-size: 15px;
+    }
+
+    .entity_container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .question {
+        width: 50%;
+    }
+
+    .explanation {
+        width: 50%;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        margin-bottom: 10px;
+    }
+
+    .final_row {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        font-size: 18px;
+    }
+
+    .final {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .final_legend {
+        font-size: 30px;
+    }
+    </style>
+</head>
+
+<body>
+    <form>
+        <fieldset>
+            <label>Este es el tweet</label>
+            <p id="tweet_text"></p>
+        </fieldset>
+        <p>¿No te gusta este tweet? Puedes saltarlo y evaluar otro
+            <button type="button" id="change_btn" onclick="askAnotherTweet()">Saltar Tweet</button>
+        </p>
+        <p>¿No hay ninguna entidad en este tweet? Puedes marcarlo como vacio <b>y no volverlo a ver</b>
+            <button type="button" id="change_btn" onclick="markAsEmpty()">Sin entidades</button>
+            (usalo sabiamente)
+        </p>
+        <fieldset>
+            <legend>Entrena el modelo</legend>
+            <div class="entity_container">
+                <div class="question">
+                    <p class="description">Copia el texto del tweet que represente una entidad, pega cada entidad en una caja de texto y selecciona el tipo.</p>
+                    <div class="row">
+                        <div>
+                            <label>E1</label>
+                            <input type="text" id="e1" />
+                        </div>
+                        <select id='e1i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E2</label>
+                            <input type="text" id="e2" />
+                        </div>
+                        <select id='e2i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E3</label>
+                            <input type="text" id="e3" />
+                        </div>
+                        <select id='e3i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E4</label>
+                            <input type="text" id="e4" />
+                        </div>
+                        <select id='e4i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E5</label>
+                            <input type="text" id="e5" />
+                        </div>
+                        <select id='e5i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E6</label>
+                            <input type="text" id="e6" />
+                        </div>
+                        <select id='e6i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E7</label>
+                            <input type="text" id="e7" />
+                        </div>
+                        <select id='e7i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E8</label>
+                            <input type="text" id="e8" />
+                        </div>
+                        <select id='e8i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E9</label>
+                            <input type="text" id="e9" />
+                        </div>
+                        <select id='e9i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E10</label>
+                            <input type="text" id="e10" />
+                        </div>
+                        <select id='e10i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E11</label>
+                            <input type="text" id="e11" />
+                        </div>
+                        <select id='e11i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <label>E12</label>
+                            <input type="text" id="e12" />
+                        </div>
+                        <select id='e12i'>
+                            <option value="CITY">Ciudad</option>
+                            <option value="CAUSE_OF_DEATH">Causa de muerte</option>
+                            <option value="TITLE">Cargo</option>
+                            <option value="COUNTRY">País</option>
+                            <option value="CRIMINAL_CHARGE">Delito</option>
+                            <option value="RELIGION">Religión</option>
+                            <option value="MISC">Otros</option>
+                            <option value="NUMBER">Número</option>
+                            <option value="MONEY">Dinero</option>
+                            <option value="PERSON">Personas</option>
+                            <option value="LOCATION">Lugar</option>
+                            <option value="ORGANIZATION">Organización</option>
+                            <option value="DATE">Fecha</option>
+                            <option value="NATIONALITY">Nacionalidad</option>
+                            <option value="PERCENT">Porcentaje</option>
+                            <option value="IDEOLOGY">Idelología</option>
+                        </select>
+                    </div>
+                    <div class="final_row">
+                        <label>Deja tu nombre</label>
+                        <input type="text" id="defender" />
+                    </div>
+                    <button type="button" id="train_btn" onclick="markTweet()">Guardar</button>
+                </div>
+                <div class="explanation">
+                    <table>
+                        <caption class="description">Confundido? Aca una pequeña guía que te puede ayudar</caption>
+                        <tr>
+                            <td>Ciudad</td>
+                            <td>Pitalito, Bogotá, Girardot</td>
+                        </tr>
+                        <tr>
+                            <td>Causa de muerte</td>
+                            <td>desnutrición, envenenamiento, asesinato</td>
+                        </tr>
+                        <tr>
+                            <td>Cargo</td>
+                            <td>magistrado, alcalde, senador</td>
+                        </tr>
+                        <tr>
+                            <td>País</td>
+                            <td>Colombia, Venezuela, Brasil</td>
+                        </tr>
+                        <tr>
+                            <td>Delito</td>
+                            <td>peculado, soborno, fraude</td>
+                        </tr>
+                        <tr>
+                            <td>Religión</td>
+                            <td>católico, cristiano, judío</td>
+                        </tr>
+                        <tr>
+                            <td>Otros</td>
+                            <td>Bonos carrasquilla, ruta del sol, cartel de la hemofilia</td>
+                        </tr>
+                        <tr>
+                            <td>Número</td>
+                            <td>4 mil, 5000, 385 </td>
+                        </tr>
+                        <tr>
+                            <td>Dinero</td>
+                            <td>8 millones de pesos, $1200000, USD 4000000, COP 45000000 </td>
+                        </tr>
+                        <tr>
+                            <td>Personas</td>
+                            <td>Alvaro Uribe, Gustavo Petro, Juan Manuel Santos, Carrasquilla</td>
+                        </tr>
+                        <tr>
+                            <td>Lugar</td>
+                            <td>Ituango, parque San Agustin, sierra nevada, playa el rodadero</td>
+                        </tr>
+                        <tr>
+                            <td>Organización</td>
+                            <td>Fiscalía, Senado, Congreso, Ministerio de las TIC</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha</td>
+                            <td>ayer, mañana, 12/01/2015, 18 de febrero</td>
+                        </tr>
+                        <tr>
+                            <td>Nacionalidad</td>
+                            <td>brasilero, colombiano, mexicano</td>
+                        </tr>
+                        <tr>
+                            <td>Porcentaje</td>
+                            <td>12 por ciento, cien por ciento, 45%</td>
+                        </tr>
+                        <tr>
+                            <td>Idelología</td>
+                            <td>uribista, petrista, santista, liberal, conservador</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
+        <div class="final">
+            <p class="final_legend">Y recuerda ....</p>
+            <img src="img1.jpg" width="300px">
+        </div>
+    </form>
+    <script src="controller.js"></script>
+</body>
+
+</html>
