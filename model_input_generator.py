@@ -1,6 +1,14 @@
 import pymongo
 import os
 import random
+import subprocess
+
+#Parameters
+training_percent = 0.7
+not_entities_percent_length = 0.1;
+
+# Remove output previous files
+os.system('rm training.tsv test.tsv')
 
 remote_mongo_url = 'mongodb://negra:jamaicanGirl@ec2-34-212-201-251.us-west-2.compute.amazonaws.com/nee_experiment'
 client = pymongo.MongoClient(remote_mongo_url)
@@ -8,7 +16,7 @@ db = client.nee_experiment
 
 query_result = db.tweets.find( {'$and':[{'nee_entities':{'$exists':True}}]},{'_id':0,'full_text':1,'nee_entities':1})
 
-punctuation = '!"#$%&\'()*+,-./:;<=>?[\\]^_`{|}~'
+punctuation = '!"#$%&\'\"()*+,-./:;<=>?[\\]^_`{|}~'		
 
 entities_file_content = ''
 not_entities_file_content = ''
@@ -51,8 +59,14 @@ os.system('java -cp stanford-ner-2018-10-16/stanford-ner.jar edu.stanford.nlp.pr
 # Generating the annotated file
 os.system('perl -ne \'chomp; print "$_\tO\n"\' not_entities.tok > not_entities.tsv')
 
+#Chop the not_entities.tsv file leaving a sample
+not_entities_tokenized_length = int(subprocess.check_output('wc -l < not_entities.tsv', shell=True))
+
+numbers_of_line_to_mantain = int(not_entities_tokenized_length * not_entities_percent_length)
+os.system('gshuf -n' + str(numbers_of_line_to_mantain) +' not_entities.tsv > choped_not_entities.tsv')
+
 # Merge the two files
-os.system('paste -d \'\n\' entities.tsv not_entities.tsv > output_double_break_lines.txt')
+os.system('paste -d \'\n\' entities.tsv choped_not_entities.tsv > output_double_break_lines.txt')
 
 #Randomly generate training and test data files
 
@@ -62,7 +76,7 @@ test_content = ''
 with open('output_double_break_lines.txt','r') as input_file:
 	for line in input_file:
 		if line.strip():
-			if random.uniform(0,1) < 0.7:
+			if random.uniform(0,1) < training_percent:
 				training_content += line
 			else:
 				test_content += line
@@ -75,5 +89,5 @@ with open('test.tsv','w') as test_file:
 
 
 # Remove working files
-os.system('rm entities.tsv not_entities.tok not_entities.txt not_entities.tsv output_double_break_lines.txt')
+os.system('rm entities.tsv not_entities.tsv choped_not_entities.tsv not_entities.tok not_entities.txt output_double_break_lines.txt')
 
