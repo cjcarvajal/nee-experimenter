@@ -6,6 +6,7 @@ import random
 import subprocess
 import spacy
 import re
+import copy
 
 nlp = spacy.load('es')
 
@@ -13,7 +14,7 @@ nlp = spacy.load('es')
 training_percent = 0.7
 not_entities_percent_length = 0.1;
 number_in_string = True
-money_entity_generator_limit = 10
+money_entity_generator_limit = 1
 money_entity_generator_max = 99
 
 #Constants
@@ -33,8 +34,9 @@ client = pymongo.MongoClient(remote_mongo_url)
 db = client.nee_experiment
 
 query_result = db.tweets.find( {'$and':[{'nee_entities':{'$exists':True}}]},{'_id':0,'full_text':1,'nee_entities':1})
+artificial_tweets = []
 
-punctuation = '!"#$%&\'\"()*+,-./:;<=>?[\\]^_`{|}~'		
+punctuation = '!"#%&\'\"()*+,-./:;<=>?[\\]^_`{|}~'		
 
 training_file_items = []
 test_file_items = []
@@ -85,27 +87,42 @@ total_length = query_result.count()
 training_lenght = int(total_length * training_percent)
 tweet_counter = 0
 
-def add_money_entities(entity_list,entity):
+def add_artificial_tweet(tweet_list,tweet,replaced_value,money_value):
+	tweet_copy = {}
+	tweet_copy['nee_entities'] = copy.deepcopy(tweet['nee_entities'])
+
+	new_text = tweet['full_text'].replace(money_value,replaced_value)
+	tweet_copy['full_text'] = new_text
+
+	for entity in tweet_copy['nee_entities']:
+		if money_value == entity['text']:
+			entity['text'] = entity['text'].replace(money_value,replaced_value)
+			break
+
+	tweet_list.append(tweet_copy)
+
+def add_money_entities(tweet_list,tweet,money_entity_generator_limit):
 	money_value = ''
-	for nee_entity in entity['nee_entities']:
+	for nee_entity in tweet['nee_entities']:
 		if nee_entity['type'] == money_entity:
 			money_value = nee_entity['text']
 
 	if money_value:
-		if money_entity_generator_limit > 0:
-			randon_number = random.randint(1,number_entity_generator_limit)
+		for counter in range(money_entity_generator_limit):
+			randon_number = random.randint(1,money_entity_generator_max)
 			for multiple in money_multiples:
 				money_number = randon_number * multiple
 				number_in_string = num2words(randon_number * multiple, lang='es')
 
-			for symbol in currency_symbols:
-				replaced_value = symbol + str(money_number)
-			for suf_pre in currency_suffix_prefix:
-				replaced_value = suf_pre + number_in_string
-			for suf in currency_suffix:
-				replaced_value =number_in_string + suf
-
-			money_entity_generator_limit -= 1
+				for symbol in currency_symbols:
+					replaced_value = symbol + str(money_number)
+					add_artificial_tweet(tweet_list,tweet,replaced_value,money_value)
+				for suf_pre in currency_suffix_prefix:
+					replaced_value = suf_pre + number_in_string
+					add_artificial_tweet(tweet_list,tweet,replaced_value,money_value)
+				for suf in currency_suffix:
+					replaced_value =number_in_string + suf
+					add_artificial_tweet(tweet_list,tweet,replaced_value,money_value)
 
 retrieved_list = list(query_result)
 
@@ -114,12 +131,28 @@ for item in retrieved_list:
 	full_text = item['full_text']
 	entities = item['nee_entities']
 
-	add_money_entities(retrieved_list,item)
+	add_money_entities(artificial_tweets,item,money_entity_generator_limit)
 
 	'''
 	The order matters so the tweet text must be tokenized and classified following the
 	same order for token as presented in the original tweet
 	'''
+	if tweet_counter < training_lenght:
+		training_file_items.extend(process_tweet(full_text,entities))
+	else:
+		test_file_items.extend(process_tweet(full_text,entities))	
+
+#Add the artificial tweets to give the algorithm more instances
+tweet_counter = 0
+training_lenght = int(len(artificial_tweets) * training_percent)
+
+#print artificial_tweets
+
+for item in artificial_tweets:
+	tweet_counter += 1
+	full_text = item['full_text']
+	entities = item['nee_entities']
+
 	if tweet_counter < training_lenght:
 		training_file_items.extend(process_tweet(full_text,entities))
 	else:
