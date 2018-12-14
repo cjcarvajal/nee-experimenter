@@ -1,0 +1,20 @@
+CRIMINAL_CHARGE actos de corrupción
+CRIMINAL_CHARGE administración desleal
+CRIMINAL_CHARGE concierto para delinquir
+CRIMINAL_CHARGE contrabando
+CRIMINAL_CHARGE contrato sin cumplimiento de los requisitos legales
+CRIMINAL_CHARGE corrupcion
+CRIMINAL_CHARGE corrupción
+CRIMINAL_CHARGE corrupción inmobiliaria
+CRIMINAL_CHARGE desviación de recursos
+CRIMINAL_CHARGE falsedad en documento público
+CRIMINAL_CHARGE financiamiento ilegal de campañas
+CRIMINAL_CHARGE hechos irregulares en el ejercicio contable
+CRIMINAL_CHARGE lavado de activos
+CRIMINAL_CHARGE microrrobo
+CRIMINAL_CHARGE narcotráfico
+CRIMINAL_CHARGE peculado
+CRIMINAL_CHARGE prevaricato
+CRIMINAL_CHARGE robo
+CRIMINAL_CHARGE secuestro
+CRIMINAL_CHARGE soborno

@@ -16,6 +16,8 @@ stanford_params_map = {'properties': json.dumps(stanford_properties_map), 'pipel
 
 vision_model = ner.SocketNER(host='localhost', port=9191)
 
+punctuation = '!"#%&\'\"()*+,-./:;<=>?[\\]^_`{|}~'
+
 def evaluate():
 
 	stanford_metrics = {}
@@ -78,12 +80,11 @@ def update_metrics(expected_entities,obtained_entities,metrics):
 			metrics[obtained_entity['type']] = {'tp':0,'fp':1,'fn':0}
 
 def getEntityFromList(entity,entity_list):
+	clean_text = entity['text'].strip().lstrip(punctuation).rstrip(punctuation)
 	for item in entity_list:
-		if item['type'] == entity['type'] and item['text'] == entity['text']:
+		if item['type'] == entity['type'] and item['text'] == clean_text:
 			return item
 	return None
-
-result = {u'CITY': {'fp': 34, 'fn': 75, 'tp': 69}, u'CAUSE_OF_DEATH': {'fp': 14, 'fn': 2, 'tp': 2}, u'NATIONALITY': {'fp': 3, 'fn': 18, 'tp': 4}, u'TITLE': {'fp': 79, 'fn': 146, 'tp': 118}, u'PERCENT': {'fp': 2, 'fn': 2, 'tp': 2}, u'COUNTRY': {'fp': 6, 'fn': 13, 'tp': 69}, u'RELIGION': {'fp': 3, 'fn': 1, 'tp': 1}, u'MISC': {'fp': 70, 'fn': 280, 'tp': 10}, u'NUMBER': {'fp': 57, 'fn': 42, 'tp': 50}, u'MONEY': {'fp': 13, 'fn': 37, 'tp': 0}, u'PERSON': {'fp': 102, 'fn': 283, 'tp': 156}, u'IDEOLOGY': {'fp': 14, 'fn': 24, 'tp': 1}, u'LOCATION': {'fp': 63, 'fn': 24, 'tp': 1}, u'CRIMINAL_CHARGE': {'fp': 14, 'fn': 374, 'tp': 1}, u'DATE': {'fp': 21, 'fn': 20, 'tp': 2}, u'ORGANIZATION': {'fp': 260, 'fn': 258, 'tp': 222}, u'STATE_OR_PROVINCE': {'fp': 1, 'fn': 1, 'tp': 1}}
 
 def print_results(metrics):
 	tp_total = 0

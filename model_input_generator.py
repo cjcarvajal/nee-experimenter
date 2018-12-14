@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from num2words import num2words
 import pymongo
 import os
 import random
@@ -6,6 +8,22 @@ import subprocess
 #Parameters
 training_percent = 0.7
 not_entities_percent_length = 0.1;
+
+number_entity_generator_limit = 100
+number_repetition_factor = 1
+number_in_string = True
+
+money_entity_generator_limit = 10
+money_entity_generator_max = 99
+
+
+#Constants
+number_entity = 'NUMBER'
+money_entity = 'MONEY'
+currency_symbols = ['$']
+currency_suffix_prefix = ['USD ','COP ','EUR']
+currency_suffix = [' de dolares', ' de pesos', ' de euros']
+money_multiples = [1000000,10000000,100000000,1000000000,10000000000,100000000000,1000000000000]
 
 # Remove output previous files
 os.system('rm training.tsv test.tsv')
@@ -38,7 +56,35 @@ for item in query_result:
 		
 		full_text = full_text.replace(dirty_text,'')
 		not_entities_file_content = not_entities_file_content + full_text + ' '
-		
+
+'''
+Add numeric entities to the files
+'''
+for counter in range(number_entity_generator_limit):
+	randon_number = random.randint(1,number_entity_generator_limit)
+	number_in_string = num2words(randon_number, lang='es')
+	for repetition in range(number_repetition_factor):
+		entities_file_content += str(randon_number) + '\t' + number_entity + '\n'
+		if number_in_string:
+			entities_file_content += number_in_string + '\t' + number_entity + '\n'
+
+'''
+Add money entities to the files
+'''
+for counter in range(money_entity_generator_limit):
+	randon_number = random.randint(1,money_entity_generator_max)
+
+	for multiple in money_multiples:
+		money_number = randon_number * multiple
+		number_in_string = num2words(randon_number * multiple, lang='es')
+
+		for symbol in currency_symbols:
+			entities_file_content += symbol + str(money_number) + '\t' + money_entity + '\n'
+		for suf_pre in currency_suffix_prefix:
+			entities_file_content += suf_pre + number_in_string + '\t' + money_entity + '\n'
+		for suf in currency_suffix:
+			entities_file_content += number_in_string + suf + '\t' + money_entity + '\n'
+
 '''
 Now I save the entities in a tsv file
 '''
